@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         gold: {
-          DEFAULT: '#D4AF37',
-          dark: '#B8860B',
-          light: '#F7E7CE',
+          DEFAULT: '#CCFF00',       /* Neon Lime */
+          dark: '#CCFF00',          /* Neon Lime */
+          light: 'rgba(204, 255, 0, 0.1)',
         },
-        primary: '#1D262C',
-        cream: '#F7E7CE',
+        primary: '#000000',         /* Pure Black */
+        cream: '#000000',           /* Pure Black */
       },
       fontFamily: {
-        clash: ['Clash Display', 'sans-serif'],
-        satoshi: ['Satoshi', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        clash: ['Space Mono', 'monospace'],
+        satoshi: ['Space Mono', 'monospace'],
+        mono: ['Space Mono', 'monospace'],
       },
       animation: {
         'float': 'float 4s ease-in-out infinite',
@@ -35,8 +35,8 @@ export default {
           '50%': { transform: 'translateY(-15px)' },
         },
         pulseGold: {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)' },
-          '50%': { boxShadow: '0 0 40px rgba(212, 175, 55, 0.5)' },
+          '0%, 100%': { boxShadow: '0 0 20px rgba(204, 255, 0, 0.3)' },
+          '50%': { boxShadow: '0 0 40px rgba(204, 255, 0, 0.5)' },
         }
       },
     },
