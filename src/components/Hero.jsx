@@ -1,325 +1,237 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Github } from 'lucide-react'
+import { ArrowRight, ArrowDown } from 'lucide-react'
 
-const TECH_WORDS = ['DIGITAL', 'MODERN', 'SECURE', 'ELEGANT', 'FAST', 'SMART']
-
-const scrambleText = (text, target, setter) => {
-  let iteration = 0
-  const maxIterations = 8
-  const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/`~'
-
-  const interval = setInterval(() => {
-    setter(
-      target.split('').map((char, index) => {
-        if (index < iteration) return char
-        return chars[Math.floor(Math.random() * chars.length)]
-      }).join('')
-    )
-
-    iteration++
-
-    if (iteration > target.length + 2) {
-      setter(target)
-      clearInterval(interval)
-    }
-  }, 40)
-
-  return () => clearInterval(interval)
-}
-
-function useMousePosition() {
-  const [pos, setPos] = useState({ x: 0, y: 0 })
-  useEffect(() => {
-    const handle = (e) => setPos({ x: e.clientX, y: e.clientY })
-    window.addEventListener('mousemove', handle)
-    return () => window.removeEventListener('mousemove', handle)
-  }, [])
-  return pos
-}
+const heroWords = [
+  { word: 'web design', color: 'span_gradient' },
+  { word: 'branding', color: 'span_gradient' },
+  { word: 'software', color: 'span_gradient' },
+  { word: 'AI solutions', color: 'span_gradient' },
+]
 
 export default function Hero() {
-  const [headlineText, setHeadlineText] = useState('DIGITAL')
   const [wordIndex, setWordIndex] = useState(0)
-  const [isScrambling, setIsScrambling] = useState(false)
-  const mousePos = useMousePosition()
-
-  // Text scramble effect
-  const triggerScramble = useCallback(() => {
-    if (isScrambling) return
-    setIsScrambling(true)
-    const nextIndex = (wordIndex + 1) % TECH_WORDS.length
-    const cleanup = scrambleText(TECH_WORDS[nextIndex], TECH_WORDS[nextIndex], setHeadlineText)
-    setWordIndex(nextIndex)
-    setTimeout(() => {
-      setIsScrambling(false)
-    }, TECH_WORDS[nextIndex].length * 40 + 100)
-    return cleanup
-  }, [wordIndex, isScrambling])
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      triggerScramble()
-    }, 4000)
-    return () => clearInterval(timer)
-  }, [triggerScramble])
-
-  // Parallax offset based on mouse
-  const parallaxX = (mousePos.x / window.innerWidth - 0.5) * 20
-  const parallaxY = (mousePos.y / window.innerHeight - 0.5) * 20
+    const interval = setInterval(() => {
+      setWordIndex(prev => (prev + 1) % heroWords.length)
+    }, 2800)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center pt-32 pb-20 overflow-hidden bg-transparent">
-      <div className="max-w-[1200px] w-full mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center z-10">
-        {/* Left Content */}
-        <motion.div
-          initial={{ opacity: 0, x: -45 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          {/* Badge */}
+    <section
+      id="home"
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden"
+      style={{
+        background: 'linear-gradient(180deg, #0a0c17 0%, #030303 65%)'
+      }}
+    >
+      {/* Animated background blurs */}
+      <div
+        className="background-blur is-top-left"
+        style={{
+          width: '38rem', height: '38rem',
+          background: 'radial-gradient(circle, rgba(37, 173, 249, 0.22) 0%, transparent 70%)',
+          top: '-8%', left: '-12%'
+        }}
+      />
+      <div
+        className="background-blur is-bottom-right"
+        style={{
+          width: '30rem', height: '30rem',
+          background: 'radial-gradient(circle, rgba(0, 229, 209, 0.18) 0%, transparent 70%)',
+          bottom: '5%', right: '-8%'
+        }}
+      />
+
+      {/* Perspective grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
+
+      <div className="max-w-[1360px] w-full mx-auto px-6 md:px-10 pt-32 pb-20 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left Content */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="badge mb-8 inline-flex items-center gap-2 border border-[#CCFF00] group cursor-pointer"
-            onClick={triggerScramble}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="w-2 h-2 bg-[#CCFF00] animate-ping rounded-none" />
-            <span className="text-[10px] tracking-[2px] font-bold">SYSTEM ACTIVE // READY FOR BUILD</span>
-          </motion.div>
-
-          {/* Headline with Scramble Effect */}
-          <h1 className="font-bold text-4xl md:text-5xl lg:text-[64px] leading-[1.05] mb-6 uppercase text-white tracking-[-2px]">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
+            {/* Pill badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="block"
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="mb-8"
             >
-              We Build
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
+              <div className="pill-item inline-flex">
+                <div className="pill-item-inner">Introducing Trigon Vertex</div>
+              </div>
+            </motion.div>
+
+            {/* Hero Headline */}
+            <motion.h1
+              className="home_hero_heading text-white mb-6"
+              initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="block text-[#CCFF00] gradient-text-gold relative inline-block"
-              onMouseEnter={triggerScramble}
+              transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
-              {headlineText}
-              <span className="typing-cursor" />
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="block"
-            >
-              Experiences
-            </motion.span>
-          </h1>
-
-          {/* Subtitle with typewriter cursor */}
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="text-sm md:text-base text-[#CCCCCC]/80 mb-10 max-w-lg leading-[1.8] font-light"
-          >
-            A cohesive team of 3 full-stack developers crafting high-performance web applications,
-            AI solutions, and ultra-premium digital interfaces that empower user engagement and scale businesses globally.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="flex flex-wrap gap-5"
-          >
-            <a href="#projects" className="btn-primary tracking-[2px] text-xs group">
-              VIEW WORK
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a
-              href="https://github.com/sakshichavandvg-sketch"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary tracking-[2px] text-xs group"
-            >
-              <Github className="w-4 h-4 group-hover:rotate-6 transition-transform" />
-              GITHUB
-            </a>
-          </motion.div>
-
-          {/* Tech Stack with floating tags */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            className="flex flex-wrap gap-3 mt-14"
-          >
-            {['React', 'Node.js', 'Python', 'TensorFlow', 'TypeScript'].map((tech, i) => (
+              <span className="span_gradient-light">A creative agency for</span>
+              <br />
               <motion.span
-                key={tech}
-                initial={{ opacity: 0, y: 10 }}
+                key={wordIndex}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 + i * 0.1 }}
-                whileHover={{ y: -3, borderColor: '#CCFF00' }}
-                className="tag text-[10px] tracking-[1px] uppercase cursor-default"
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.5 }}
+                className="span_gradient"
               >
-                {tech}
+                {heroWords[wordIndex].word}
               </motion.span>
-            ))}
+              <br />
+              <span className="span_gradient-light">&amp; Webflow.</span>
+            </motion.h1>
+
+            {/* Body text */}
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="text-base md:text-lg text-neutral-400 mb-10 max-w-lg leading-[1.75] font-light"
+            >
+              We design and build websites, AI systems, and digital products for companies that care
+              how they look. Based anywhere, working with clients globally.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.65, duration: 0.6 }}
+              className="flex flex-wrap gap-4"
+            >
+              <a href="#work" className="button group">
+                <span>Launch a project</span>
+                <div className="button_hover" />
+              </a>
+              <a href="#about" className="button is-secondary group inline-flex items-center gap-2">
+                About us
+              </a>
+            </motion.div>
           </motion.div>
-        </motion.div>
 
-        {/* Right Content - 3D Geometric HUD */}
+          {/* Right - Geometric Hero Graphic */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden lg:flex justify-center items-center"
+          >
+            <div className="relative w-[480px] h-[420px]">
+              {/* Main gradient backdrop card */}
+              <div
+                className="absolute inset-0 rounded-3xl border border-white/[0.08] overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #0d1626 0%, #050a14 60%)',
+                }}
+              >
+                {/* Stars / dots */}
+                <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 480 420">
+                  {[...Array(40)].map((_, i) => (
+                    <circle
+                      key={i}
+                      cx={Math.random() * 480}
+                      cy={Math.random() * 420}
+                      r={Math.random() * 1.5 + 0.5}
+                      fill="white"
+                      opacity={Math.random() * 0.8 + 0.2}
+                    />
+                  ))}
+                </svg>
+
+                {/* Inner glow */}
+                <div
+                  className="absolute rounded-full opacity-40 blur-[60px]"
+                  style={{
+                    width: '220px', height: '220px',
+                    background: 'radial-gradient(circle, #00E5D1 0%, transparent 70%)',
+                    bottom: '-60px', left: '50%', transform: 'translateX(-50%)'
+                  }}
+                />
+                <div
+                  className="absolute rounded-full opacity-25 blur-[60px]"
+                  style={{
+                    width: '180px', height: '180px',
+                    background: 'radial-gradient(circle, #2577F9 0%, transparent 70%)',
+                    top: '-40px', right: '40px'
+                  }}
+                />
+
+                {/* Phunk brand mark overlay */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg width="180" height="180" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.15">
+                    <path d="M20.172 20.1893H9.78247C9.78004 17.5933 8.7486 15.1044 6.91456 13.2688C5.08052 11.4332 2.59372 10.4009 0 10.3984L0 0C5.34771 0.00730689 10.4743 2.13673 14.2557 5.92138C18.0371 9.70602 20.1647 14.837 20.172 20.1893Z" fill="#00E5D1"/>
+                    <path d="M20.172 41.0001H9.78247C9.78004 38.4041 8.7486 35.9152 6.91456 34.0796C5.08052 32.244 2.59372 31.2117 0 31.2092L0 20.8108C5.34771 20.8181 10.4743 22.9475 14.2557 26.7322C18.0371 30.5168 20.1647 35.6478 20.172 41.0001Z" fill="#00E5D1"/>
+                    <path d="M40.965 41.0001C35.6169 40.994 30.4896 38.865 26.7079 35.08C22.9263 31.2951 20.7991 26.1635 20.793 20.8108H31.1825C31.185 23.4067 32.2164 25.8957 34.0504 27.7313C35.8845 29.5669 38.3713 30.5992 40.965 30.6016V41.0001Z" fill="#00E5D1"/>
+                    <path d="M40.965 20.1893C35.6173 20.182 30.4907 18.0526 26.7093 14.2679C22.9279 10.4833 20.8003 5.35229 20.793 0L31.1825 0C31.185 2.59594 32.2164 5.08487 34.0504 6.92048C35.8845 8.75609 38.3713 9.7884 40.965 9.79084V20.1893Z" fill="#00E5D1"/>
+                  </svg>
+                </div>
+
+                {/* Floating stat cards */}
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute top-6 left-6 bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-xl px-4 py-3"
+                >
+                  <div className="text-[11px] text-neutral-400 mb-0.5">Projects Live</div>
+                  <div className="text-xl font-bold text-white">50+</div>
+                </motion.div>
+
+                <motion.div
+                  animate={{ y: [0, 10, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+                  className="absolute bottom-8 right-6 bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-xl px-4 py-3"
+                >
+                  <div className="text-[11px] text-neutral-400 mb-0.5">Satisfaction</div>
+                  <div className="text-xl font-bold span_gradient">100%</div>
+                </motion.div>
+
+                <motion.div
+                  animate={{ y: [0, -7, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                  className="absolute bottom-16 left-8 bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-xl px-4 py-3"
+                >
+                  <div className="text-[11px] text-neutral-400 mb-0.5">Years Active</div>
+                  <div className="text-xl font-bold text-white">2+</div>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
         <motion.div
-          initial={{ opacity: 0, x: 45 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="hidden lg:flex justify-center items-center relative"
-          style={{
-            transform: `perspective(1000px) rotateY(${parallaxX * 0.5}deg) rotateX(${-parallaxY * 0.5}deg)`,
-            transition: 'transform 0.2s ease-out',
-          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          <div className="w-[480px] h-[480px] border border-[#CCFF00]/10 flex items-center justify-center relative bg-black/40">
-            {/* Corner brackets */}
-            <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-[#CCFF00]" />
-            <div className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-[#CCFF00]" />
-            <div className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 border-[#CCFF00]" />
-            <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-[#CCFF00]" />
-
-            {/* Main SVG HUD */}
-            <svg viewBox="0 0 400 400" className="w-[90%] h-[90%] overflow-visible">
-              {/* Outer coordinates */}
-              <circle cx="200" cy="200" r="170" fill="none" stroke="#CCFF00" strokeWidth="0.5" strokeDasharray="2 6" opacity="0.15" />
-              
-              {/* Rotating ring 1 */}
-              <motion.circle
-                cx="200" cy="200" r="145"
-                fill="none" stroke="#CCFF00" strokeWidth="1.5"
-                strokeDasharray="80 30 15 40"
-                opacity="0.4"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              />
-
-              {/* Rotating ring 2 (counter) */}
-              <motion.circle
-                cx="200" cy="200" r="115"
-                fill="none" stroke="#CCFF00" strokeWidth="1"
-                strokeDasharray="180 15 30 15"
-                opacity="0.25"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-              />
-
-              {/* Crosshair lines */}
-              <line x1="200" y1="15" x2="200" y2="385" stroke="#CCFF00" strokeWidth="0.5" opacity="0.12" />
-              <line x1="15" y1="200" x2="385" y2="200" stroke="#CCFF00" strokeWidth="0.5" opacity="0.12" />
-              <line x1="60" y1="60" x2="340" y2="340" stroke="#CCFF00" strokeWidth="0.5" strokeDasharray="3 6" opacity="0.08" />
-              <line x1="60" y1="340" x2="340" y2="60" stroke="#CCFF00" strokeWidth="0.5" strokeDasharray="3 6" opacity="0.08" />
-
-              {/* Inner rings */}
-              <circle cx="200" cy="200" r="80" fill="none" stroke="#CCFF00" strokeWidth="0.8" opacity="0.15" />
-              <circle cx="200" cy="200" r="50" fill="none" stroke="#CCFF00" strokeWidth="1.5" strokeDasharray="8 4" opacity="0.3" />
-
-              {/* Pulse sphere center */}
-              <motion.circle
-                cx="200" cy="200" r="18"
-                fill="rgba(204, 255, 0, 0.08)"
-                stroke="#CCFF00" strokeWidth="2"
-                animate={{ r: [18, 22, 18], opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <circle cx="200" cy="200" r="4" fill="#CCFF00" />
-              <motion.circle
-                cx="200" cy="200" r="4"
-                fill="#CCFF00"
-                animate={{ r: [4, 8, 4], opacity: [1, 0.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
-
-              {/* Connected nodes */}
-              <g opacity="0.7">
-                {/* Node 1 - Top Left */}
-                <motion.g
-                  animate={{ y: [0, -8, 0], x: [0, 4, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <line x1="110" y1="120" x2="200" y2="200" stroke="#CCFF00" strokeWidth="0.8" opacity="0.4" />
-                  <circle cx="110" cy="120" r="4" fill="#CCFF00" />
-                  <circle cx="110" cy="120" r="9" fill="none" stroke="#CCFF00" strokeWidth="0.5" opacity="0.4" />
-                  <text x="68" y="115" fill="#CCFF00" fontSize="7" fontFamily="monospace">SYS.NODE_01</text>
-                </motion.g>
-
-                {/* Node 2 - Top Right */}
-                <motion.g
-                  animate={{ y: [0, 6, 0], x: [0, -5, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                >
-                  <line x1="290" y1="130" x2="200" y2="200" stroke="#CCFF00" strokeWidth="0.8" opacity="0.4" />
-                  <circle cx="290" cy="130" r="4" fill="#CCFF00" />
-                  <circle cx="290" cy="130" r="9" fill="none" stroke="#CCFF00" strokeWidth="0.5" opacity="0.4" />
-                  <text x="298" y="135" fill="#CCFF00" fontSize="7" fontFamily="monospace">CORE.DATA_02</text>
-                </motion.g>
-
-                {/* Node 3 - Bottom */}
-                <motion.g
-                  animate={{ y: [0, -10, 0], x: [0, -3, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                >
-                  <line x1="270" y1="290" x2="200" y2="200" stroke="#CCFF00" strokeWidth="0.8" opacity="0.4" />
-                  <circle cx="270" cy="290" r="4" fill="#CCFF00" />
-                  <circle cx="270" cy="290" r="9" fill="none" stroke="#CCFF00" strokeWidth="0.5" opacity="0.4" />
-                  <text x="278" y="295" fill="#CCFF00" fontSize="7" fontFamily="monospace">NET.LINK_03</text>
-                </motion.g>
-
-                {/* Node 4 - Bottom Left */}
-                <motion.g
-                  animate={{ y: [0, 8, 0], x: [0, 5, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                >
-                  <line x1="120" y1="280" x2="200" y2="200" stroke="#CCFF00" strokeWidth="0.8" opacity="0.4" />
-                  <circle cx="120" cy="280" r="4" fill="#CCFF00" />
-                  <circle cx="120" cy="280" r="9" fill="none" stroke="#CCFF00" strokeWidth="0.5" opacity="0.4" />
-                  <text x="40" y="285" fill="#CCFF00" fontSize="7" fontFamily="monospace">DATA.STREAM_04</text>
-                </motion.g>
-              </g>
-
-              {/* HUD Metrics */}
-              <text x="15" y="25" fill="rgba(255,255,255,0.3)" fontSize="6" fontFamily="monospace">LATENCY: 12MS</text>
-              <text x="15" y="36" fill="rgba(255,255,255,0.3)" fontSize="6" fontFamily="monospace">PACKETS: 100%</text>
-              <text x="330" y="25" fill="rgba(255,255,255,0.3)" fontSize="6" fontFamily="monospace">SEC_LVL: AAA</text>
-              <text x="330" y="36" fill="#CCFF00" fontSize="6" fontFamily="monospace">GRID: ACTIVE</text>
-            </svg>
-          </div>
+          <span className="text-[10px] uppercase tracking-[3px] text-neutral-500">Scroll</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
+            className="text-neutral-500"
+          >
+            <ArrowDown className="w-4 h-4" />
+          </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-[8px] tracking-[3px] text-white/40 font-mono font-bold uppercase">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity }}
-          className="w-[14px] h-[22px] border border-[#CCFF00]/30 flex justify-center pt-1"
-        >
-          <motion.div
-            animate={{ opacity: [1, 0.2, 1] }}
-            transition={{ duration: 1.8, repeat: Infinity }}
-            className="w-[2px] h-[6px] bg-[#CCFF00]"
-          />
-        </motion.div>
-      </motion.div>
     </section>
   )
 }

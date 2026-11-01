@@ -1,159 +1,195 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, MessageSquare, Quote } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-const testimonials = [
+const TESTIMONIALS = [
   {
-    quote: "Trigon Vertex transformed our vision into a stunning web application. Their attention to detail and technical expertise is exceptional. The final product exceeded all our expectations and delivered measurable results.",
-    author: "Sarah Johnson",
-    role: "CEO, TechStartup"
+    name: 'Sarah Johnson',
+    role: 'CEO, TechStartup',
+    initials: 'SJ',
+    quote:
+      "Trigon Vertex transformed our vision into a stunning web application. Their attention to detail and technical expertise is exceptional. The final product exceeded all our expectations and delivered measurable results.",
   },
   {
-    quote: "The team's ability to combine beautiful design with robust functionality is remarkable. Our project was delivered on time and exceeded expectations. I highly recommend their services.",
-    author: "Michael Chen",
-    role: "Product Manager, InnovateLab"
+    name: 'Michael Chen',
+    role: 'Product Manager, InnovateLab',
+    initials: 'MC',
+    quote:
+      "The team's ability to combine beautiful design with robust functionality is remarkable. Our project was delivered on time and exceeded expectations. I highly recommend their services to anyone looking for premium digital work.",
   },
   {
-    quote: "Working with Trigon Vertex was a pleasure. They understood our requirements perfectly and delivered a solution that truly stands out from the competition. Professional, responsive, and highly skilled.",
-    author: "Emily Rodriguez",
-    role: "Founder, DesignHub"
-  }
+    name: 'Emily Rodriguez',
+    role: 'Founder, DesignHub',
+    initials: 'ER',
+    quote:
+      "Working with Trigon Vertex was a pleasure. They understood our requirements perfectly and delivered a solution that truly stands out from the competition. Professional, responsive, and highly skilled.",
+  },
+  {
+    name: 'Jordan Sims',
+    role: 'Director, BoxIQ Dubai',
+    initials: 'JS',
+    quote:
+      "The team were brilliant throughout the entire process. Super responsive and fair pricing. I would highly recommend Trigon Vertex for all web development and design needs — incredibly talented.",
+  },
+  {
+    name: 'Alex Lambert',
+    role: 'Partner, LambertCo',
+    initials: 'AL',
+    quote:
+      "Our new platform is regularly complimented by clients. The sleek, modern design fits perfectly and really helps us stand out from competitors in a crowded market.",
+  },
 ]
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [autoPlay, setAutoPlay] = useState(true)
 
-  const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % testimonials.length)
-  }, [])
+  const next = useCallback(() => setCurrent(p => (p + 1) % TESTIMONIALS.length), [])
+  const prev = useCallback(() => setCurrent(p => (p - 1 + TESTIMONIALS.length) % TESTIMONIALS.length), [])
 
-  const prev = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }, [])
-
-  // Auto-play
   useEffect(() => {
-    if (!isAutoPlaying) return
-    const timer = setInterval(next, 5000)
-    return () => clearInterval(timer)
-  }, [isAutoPlaying, next])
+    if (!autoPlay) return
+    const t = setInterval(next, 5000)
+    return () => clearInterval(t)
+  }, [autoPlay, next])
 
   return (
-    <section className="py-24 relative bg-transparent">
-      <div className="max-w-[900px] mx-auto px-6">
-        {/* Section Header */}
+    <section id="reviews" className="py-28 bg-[#040407] relative overflow-hidden">
+      {/* Glow */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: '28rem', height: '28rem',
+          background: 'radial-gradient(circle, rgba(37,173,249,0.1) 0%, transparent 70%)',
+          filter: 'blur(100px)',
+          bottom: 0, right: '5%'
+        }}
+      />
+
+      <div className="max-w-[1360px] w-full mx-auto px-6 md:px-10 relative z-10">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-left mb-16 border-l-4 border-[#CCFF00] pl-6"
+          className="mb-12"
         >
-          <span className="badge mb-6 inline-block">FEEDBACK // VERIFICATIONS</span>
-          <h2 className="font-bold text-4xl md:text-5xl text-white uppercase tracking-tight">
-            What Clients Say
+          <h2 className="heading_standard mb-3">
+            What our clients think of{' '}
+            <span className="span_gradient">Trigon Vertex.</span>
           </h2>
+          <p className="text-neutral-400 text-base">
+            We're honest about our skills and abilities — and we're delighted that our clients agree.
+          </p>
         </motion.div>
 
-        {/* Testimonial Card */}
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, ease: 'easeInOut' }}
-              className="glass-card p-10 md:p-14 text-left border border-[#CCFF00] bg-black relative overflow-hidden"
-            >
-              {/* Background quote mark */}
-              <Quote className="absolute -top-4 -right-4 w-24 h-24 text-[#CCFF00]/5" />
-
-              {/* Header */}
-              <div className="mb-6 flex justify-between items-center">
-                <span className="text-[9px] font-mono text-[#CCFF00]/50 tracking-[2px] font-bold">
-                  TRANSACTION // LOG.00{current + 1}
-                </span>
-                <MessageSquare className="w-5 h-5 text-[#CCFF00]/60" />
-              </div>
-              
-              {/* Quote */}
-              <div className="mb-8">
-                <p className="text-sm md:text-base text-white/90 mb-10 leading-[1.9] font-light italic">
-                  &ldquo;{testimonials[current].quote}&rdquo;
-                </p>
-              </div>
-
-              {/* Author */}
-              <div className="flex items-center gap-5 border-t border-[#CCFF00]/10 pt-6">
-                <motion.div
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  className="w-12 h-12 border border-[#CCFF00] flex items-center justify-center text-lg font-bold text-[#CCFF00] bg-black"
-                >
-                  {testimonials[current].author[0]}
-                </motion.div>
-                <div className="text-left">
-                  <div className="font-bold text-white text-sm uppercase tracking-[1px]">{testimonials[current].author}</div>
-                  <div className="text-xs text-[#CCFF00] font-bold tracking-[1px] uppercase mt-0.5 font-mono">{testimonials[current].role}</div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Navigation Controls */}
-          <div className="flex justify-between items-center mt-8">
-            <div className="flex gap-4">
-              <button
-                onClick={() => { prev(); setIsAutoPlaying(false) }}
-                className="btn-secondary py-3 px-6 text-xs flex items-center gap-2 group"
-                onMouseEnter={() => setIsAutoPlaying(false)}
+        {/* Client slider */}
+        <div
+          className="relative overflow-hidden"
+          onMouseEnter={() => setAutoPlay(false)}
+          onMouseLeave={() => setAutoPlay(true)}
+        >
+          {/* Cards row */}
+          <div className="relative min-h-[280px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={current}
+                initial={{ opacity: 0, x: 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -60 }}
+                transition={{ duration: 0.45, ease: 'easeInOut' }}
+                className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
               >
-                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                PREV
-              </button>
-              <button
-                onClick={() => { next(); setIsAutoPlaying(false) }}
-                className="btn-primary py-3 px-6 text-xs flex items-center gap-2 group"
-                onMouseEnter={() => setIsAutoPlaying(false)}
-              >
-                NEXT
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+                {/* Show 1–3 cards centred on current */}
+                {[-1, 0, 1].map(offset => {
+                  const idx = (current + offset + TESTIMONIALS.length) % TESTIMONIALS.length
+                  const t = TESTIMONIALS[idx]
+                  const isCenter = offset === 0
+                  return (
+                    <div
+                      key={idx}
+                      className={`home_clients_card ${!isCenter ? 'hidden lg:block opacity-40' : ''}`}
+                    >
+                      {/* Author */}
+                      <div className="flex items-center justify-between mb-5">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm"
+                            style={{
+                              background: 'linear-gradient(135deg, #00E5D1, #2577F9)',
+                              color: '#030303'
+                            }}
+                          >
+                            {t.initials}
+                          </div>
+                          <div>
+                            <div
+                              className="text-lg font-semibold"
+                              style={{
+                                WebkitTextFillColor: 'transparent',
+                                backgroundImage: 'linear-gradient(158deg, #00e5d1 3%, #2577f9 99%)',
+                                WebkitBackgroundClip: 'text',
+                                backgroundClip: 'text',
+                              }}
+                            >
+                              {t.name}
+                            </div>
+                            <div className="text-xs text-neutral-400">{t.role}</div>
+                          </div>
+                        </div>
+                        {/* Star rating */}
+                        <div className="flex gap-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <svg key={i} className="w-3.5 h-3.5 text-[#00E5D1]" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-neutral-400 leading-[1.8] italic">
+                        "{t.quote}"
+                      </p>
+                    </div>
+                  )
+                })}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center justify-between mt-10">
+            {/* Dots */}
+            <div className="flex gap-2">
+              {TESTIMONIALS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setCurrent(i); setAutoPlay(false) }}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === current ? 'w-8 bg-[#00E5D1]' : 'w-2.5 bg-white/20'
+                  }`}
+                  aria-label={`Testimonial ${i + 1}`}
+                />
+              ))}
             </div>
 
-            {/* Auto-play indicator */}
-            <button
-              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              className={`text-[9px] font-mono tracking-[1px] transition-colors ${
-                isAutoPlaying ? 'text-[#CCFF00]/60' : 'text-white/30'
-              }`}
-            >
-              {isAutoPlaying ? 'AUTO-PLAY ON' : 'AUTO-PLAY OFF'}
-            </button>
-          </div>
-
-          {/* Segmented Progress */}
-          <div className="flex gap-2 mt-8">
-            {testimonials.map((_, index) => (
+            {/* Arrow buttons */}
+            <div className="flex gap-3">
               <button
-                key={index}
-                onClick={() => { setCurrent(index); setIsAutoPlaying(false) }}
-                className={`h-[3px] transition-all duration-500 ${
-                  index === current
-                    ? 'flex-1 bg-[#CCFF00]'
-                    : 'flex-1 bg-[#CCFF00]/15 hover:bg-[#CCFF00]/30'
-                }`}
-                aria-label={`Go to testimonial ${index + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Counter */}
-          <div className="mt-4 text-right">
-            <span className="text-[10px] font-mono text-white/30 tracking-[2px]">
-              0{current + 1} / 0{testimonials.length}
-            </span>
+                onClick={() => { prev(); setAutoPlay(false) }}
+                className="slider-control-btn"
+                aria-label="Previous review"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => { next(); setAutoPlay(false) }}
+                className="slider-control-btn"
+                aria-label="Next review"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

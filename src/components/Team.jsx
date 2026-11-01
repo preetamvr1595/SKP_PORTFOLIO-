@@ -1,77 +1,98 @@
 import { motion } from 'framer-motion'
-import { Github, Mail, ExternalLink } from 'lucide-react'
+import { Github, Mail, Linkedin, ArrowUpRight } from 'lucide-react'
 
 function TeamCard({ member, index }) {
+  const initials = member.name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.15, duration: 0.5 }}
-      whileHover={{ y: -6 }}
-      className="glass-card p-10 text-center flex flex-col justify-between h-full group"
+      transition={{ delay: index * 0.12, duration: 0.55 }}
+      className="group rounded-2xl border border-white/[0.08] bg-[#0c0c10] overflow-hidden hover:border-white/[0.16] transition-all duration-300 hover:shadow-2xl hover:shadow-black/60"
     >
-      {/* Avatar with ring */}
-      <div className="mb-8 flex justify-center">
-        <div className="relative">
-          <motion.div
-            whileHover={{ scale: 1.08 }}
-            className="w-24 h-24 border-2 border-[#CCFF00] bg-black flex items-center justify-center text-3xl font-bold text-[#CCFF00] group-hover:bg-[#CCFF00]/10 transition-all duration-300"
-          >
-            {member.name.split(' ').map(n => n[0]).join('')}
-          </motion.div>
-          {/* Animated ring */}
-          <motion.div 
-            className="absolute -inset-1 border border-[#CCFF00]/20"
-            animate={{ opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 3, repeat: Infinity, delay: index * 0.5 }}
-          />
+      {/* Top: gradient avatar block */}
+      <div
+        className="h-48 relative flex items-center justify-center overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #0d1626 0%, #050a14 100%)'
+        }}
+      >
+        {/* Background grid */}
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
+            backgroundSize: '30px 30px',
+          }}
+        />
+
+        {/* Glow */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(circle at center, rgba(${index === 0 ? '0,229,209' : index === 1 ? '37,119,249' : '124,58,237'},0.18) 0%, transparent 70%)`
+          }}
+        />
+
+        {/* Avatar initials */}
+        <div
+          className="relative w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-bold text-[#030303] group-hover:scale-105 transition-transform duration-300"
+          style={{
+            background: 'linear-gradient(135deg, #00E5D1 0%, #2577F9 100%)',
+            boxShadow: '0 8px 30px -5px rgba(0,229,209,0.4)'
+          }}
+        >
+          {initials}
         </div>
       </div>
 
-      {/* Info */}
-      <div className="flex-1">
-        <h3 className="font-bold text-lg text-white mb-2 uppercase tracking-[1px] group-hover:text-[#CCFF00] transition-colors duration-300">
-          {member.name}
-        </h3>
-        <p className="text-[#CCFF00] font-bold text-xs tracking-[1px] mb-6 uppercase font-mono">{member.role}</p>
+      {/* Content */}
+      <div className="p-6">
+        <h3 className="text-lg font-semibold text-white mb-1">{member.name}</h3>
+        <p
+          className="text-sm font-medium mb-4"
+          style={{
+            WebkitTextFillColor: 'transparent',
+            backgroundImage: 'linear-gradient(158deg, #00e5d1 3%, #2577f9 99%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+          }}
+        >
+          {member.role}
+        </p>
 
-        {/* Skills with stagger */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {member.skills.slice(0, 4).map((skill, i) => (
-            <motion.span
-              key={skill}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15 + i * 0.08 }}
-              whileHover={{ y: -2, borderColor: '#CCFF00' }}
-              className="tag text-[9px] uppercase tracking-[1px]"
-            >
-              {skill}
-            </motion.span>
+        {/* Skill tags */}
+        <div className="flex flex-wrap gap-1.5 mb-6">
+          {member.skills.slice(0, 4).map(skill => (
+            <div key={skill} className="pill-item">
+              <div className="pill-item-inner text-[10px]">{skill}</div>
+            </div>
           ))}
         </div>
-      </div>
 
-      {/* Contact Buttons */}
-      <div className="flex gap-4 border-t border-[#CCFF00]/10 pt-6 mt-auto">
-        <a
-          href={member.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-secondary py-2.5 px-3 text-[10px] tracking-[1px] uppercase flex items-center justify-center gap-1.5 flex-1 group/btn"
-        >
-          <Github className="w-3.5 h-3.5 group-hover/btn:rotate-6 transition-transform" />
-          GITHUB
-        </a>
-        <a
-          href={`mailto:${member.email}`}
-          className="btn-primary py-2.5 px-3 text-[10px] tracking-[1px] uppercase flex items-center justify-center gap-1.5 flex-1"
-        >
-          <Mail className="w-3.5 h-3.5" />
-          EMAIL
-        </a>
+        {/* Links */}
+        <div className="flex gap-2 pt-4 border-t border-white/[0.06]">
+          <a
+            href={member.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 button is-secondary inline-flex items-center justify-center gap-2 text-xs py-2"
+          >
+            <Github className="w-3.5 h-3.5" /> GitHub
+          </a>
+          <a
+            href={`mailto:${member.email}`}
+            className="flex-1 button inline-flex items-center justify-center gap-2 text-xs py-2"
+          >
+            <Mail className="w-3.5 h-3.5" /> Email
+            <div className="button_hover" />
+          </a>
+        </div>
       </div>
     </motion.div>
   )
@@ -79,26 +100,26 @@ function TeamCard({ member, index }) {
 
 export default function Team({ members }) {
   return (
-    <section id="team" className="py-24 relative bg-transparent">
-      <div className="max-w-[1200px] w-full mx-auto px-6">
-        {/* Section Header */}
+    <section id="team" className="py-28 relative overflow-hidden">
+      <div className="max-w-[1360px] w-full mx-auto px-6 md:px-10 relative z-10">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-left mb-16 border-l-4 border-[#CCFF00] pl-6"
+          className="mb-16"
         >
-          <span className="badge mb-6 inline-block">TEAM // CORE ENGINEERS</span>
-          <h2 className="font-bold text-4xl md:text-5xl text-white mb-4 uppercase tracking-tight">
-            Our Developers
+          <h2 className="heading_standard mb-3">
+            Meet the{' '}
+            <span className="span_gradient">team.</span>
           </h2>
-          <p className="text-[#CCCCCC]/70 max-w-2xl text-sm leading-relaxed">
-            A cohesive cluster of systems engineers, full-stack builders, and algorithm researchers.
+          <p className="text-neutral-400 text-base max-w-xl leading-relaxed">
+            A cohesive cluster of engineers, full-stack builders, and AI researchers working together to
+            deliver exceptional digital experiences.
           </p>
         </motion.div>
 
-        {/* Team Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {members.map((member, index) => (
             <TeamCard key={member.id} member={member} index={index} />
           ))}

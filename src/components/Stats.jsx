@@ -1,98 +1,80 @@
-import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
 import { stats } from '../data/data'
-import { Users, Code, Star, Award } from 'lucide-react'
 
-const icons = [Users, Code, Star, Award]
-
-function AnimatedCounter({ value, suffix, isVisible }) {
+function useCountUp(target, isVisible) {
   const [count, setCount] = useState(0)
-
   useEffect(() => {
     if (!isVisible) return
     let start = 0
-    const duration = 2000
-    const increment = value / (duration / 16)
+    const duration = 2200
+    const step = target / (duration / 16)
     const timer = setInterval(() => {
-      start += increment
-      if (start >= value) {
-        setCount(value)
-        clearInterval(timer)
-      } else setCount(Math.floor(start))
+      start += step
+      if (start >= target) { setCount(target); clearInterval(timer) }
+      else setCount(Math.floor(start))
     }, 16)
     return () => clearInterval(timer)
-  }, [value, isVisible])
-
-  return <span>{count}{suffix}</span>
+  }, [target, isVisible])
+  return count
 }
 
-function StatCard({ stat, index, icon: Icon }) {
-  const [isVisible, setIsVisible] = useState(false)
+function StatItem({ stat, index }) {
+  const [visible, setVisible] = useState(false)
   const ref = useRef(null)
+  const count = useCountUp(stat.value, visible)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
-        }
-      },
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } },
       { threshold: 0.3 }
     )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
   }, [])
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.12, duration: 0.5 }}
-      whileHover={{ y: -4 }}
-      className="cyber-stat flex flex-col justify-center py-6 bg-black border-l-2 border-[#CCFF00] pl-6 relative group"
+      transition={{ delay: index * 0.12, duration: 0.55 }}
+      className="flex flex-col items-center text-center px-4"
     >
-      {/* Top accent line */}
-      <div className="absolute top-0 left-6 right-0 h-[1px] bg-[#CCFF00]/10 group-hover:bg-[#CCFF00]/30 transition-colors" />
-
-      {/* Tech Icon */}
-      <div className="flex items-center gap-3 mb-4">
-        <Icon className="w-5 h-5 text-[#CCFF00] group-hover:scale-110 transition-transform duration-300" />
-        <span className="text-[9px] tracking-[2px] font-mono font-bold text-white/30">SYS.METRIC_0{index + 1}</span>
+      <div
+        className="text-4xl md:text-5xl font-bold mb-2 span_gradient"
+        style={{
+          WebkitTextFillColor: 'transparent',
+          backgroundImage: 'linear-gradient(158deg, #00e5d1 3%, #2577f9 99%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+        }}
+      >
+        {count}{stat.suffix}
       </div>
-
-      {/* Counter */}
-      <div className="cyber-stat-val font-black tracking-tight mb-2">
-        <AnimatedCounter value={stat.value} suffix={stat.suffix} isVisible={isVisible} />
-      </div>
-
-      {/* Label */}
-      <div className="text-xs uppercase tracking-[2px] text-[#CCCCCC]/70 font-bold font-mono">
-        {stat.label}
-      </div>
-
-      {/* Decorative corner */}
-      <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#CCFF00]/20 group-hover:border-[#CCFF00]/60 transition-colors" />
+      <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider">{stat.label}</div>
     </motion.div>
   )
 }
 
 export default function Stats() {
   return (
-    <section className="py-16 relative bg-transparent">
-      <div className="max-w-[1200px] w-full mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-        >
+    <section className="py-16 border-y border-white/[0.06] bg-[#050507] relative overflow-hidden">
+      {/* Subtle glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 50%, rgba(37, 173, 249, 0.07) 0%, transparent 70%)'
+        }}
+      />
+
+      <div className="max-w-[1360px] w-full mx-auto px-6 md:px-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/[0.06]">
           {stats.map((stat, index) => (
-            <StatCard key={stat.label} stat={stat} index={index} icon={icons[index]} />
+            <StatItem key={stat.label} stat={stat} index={index} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )
