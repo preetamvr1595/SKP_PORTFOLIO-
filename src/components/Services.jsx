@@ -1,147 +1,149 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, Globe, Code2, Cpu, Palette, Zap } from 'lucide-react'
+import { Check, ArrowRight, Code, Brain, Palette, Zap } from 'lucide-react'
+import { services } from '../data/data'
+import DirectionalButton from './DirectionalButton'
 
-const SERVICES = [
-  {
-    num: '01',
-    icon: Globe,
-    title: 'Web Design & Development',
-    accent: '#00E5D1',
-    description:
-      'We create stunning, engaging, and high-conversion websites. Search engine optimisation and cutting-edge user experience design come as standard, along with exceptional reliability, scalability, and performance.',
-  },
-  {
-    num: '02',
-    icon: Palette,
-    title: 'UI/UX Design & Branding',
-    accent: '#2577F9',
-    description:
-      'Whether you\'re building a brand from scratch or developing new campaign assets, we have a wealth of experience in logo design, brand identity, and social media presence.',
-  },
-  {
-    num: '03',
-    icon: Code2,
-    title: 'Software Development',
-    accent: '#25ADF9',
-    description:
-      'Finding an off-the-shelf app that fits your business model can be tricky. We create custom systems to meet specific needs — from bespoke portals to enterprise full-stack applications.',
-  },
-  {
-    num: '04',
-    icon: Cpu,
-    title: 'AI & Machine Learning',
-    accent: '#7c3aed',
-    description:
-      'Intelligent systems powered by deep learning algorithms. From computer vision to NLP, we turn complex AI research into practical, production-ready solutions.',
-  },
-  {
-    num: '05',
-    icon: Zap,
-    title: 'Performance Optimisation',
-    accent: '#f59e0b',
-    description:
-      'Lightning-fast applications with optimised code and efficient architectures. We make your existing systems faster, leaner, and more reliable under load.',
-  },
-]
+export default function Services({ onOpenContact }) {
+  const getIcon = (iconName) => {
+    switch (iconName) {
+      case 'code':
+        return <Code className="w-6 h-6" />
+      case 'brain':
+        return <Brain className="w-6 h-6" />
+      case 'palette':
+        return <Palette className="w-6 h-6" />
+      case 'zap':
+        return <Zap className="w-6 h-6" />
+      default:
+        return <Code className="w-6 h-6" />
+    }
+  }
 
-function ServiceCard({ svc, index }) {
-  const Icon = svc.icon
   return (
-    <motion.a
-      href="#contact"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-      className="home_aspects_card group cursor-pointer"
-    >
-      {/* Image placeholder with gradient */}
-      <div className="home_aspects_card_image mb-6 overflow-hidden" style={{ height: '200px' }}>
-        {/* Gradient fill + icon centred */}
-        <div
-          className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500"
-          style={{
-            background: `radial-gradient(ellipse at center, ${svc.accent}55 0%, transparent 70%)`
-          }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Icon
-            className="w-16 h-16 transition-all duration-500 group-hover:scale-110"
-            style={{ color: svc.accent, opacity: 0.55 }}
-          />
-        </div>
-
-        {/* Arrow icon (Phunk style) */}
-        <div className="home_aspects_card_arrow-icon">
-          <ArrowRight className="w-4 h-4" />
-        </div>
-      </div>
-
-      {/* Number */}
-      <div className="home_aspects_card_number mb-2">{svc.num}</div>
-
-      {/* Title */}
-      <h3
-        className="text-xl md:text-2xl font-semibold text-white mb-3 leading-snug group-hover:text-[#00E5D1] transition-colors duration-300"
-      >
-        <span className="span_gradient">{svc.title}</span>
-      </h3>
-
-      <p className="text-sm text-neutral-400 leading-[1.75]">{svc.description}</p>
-    </motion.a>
-  )
-}
-
-export default function Services() {
-  return (
-    <section id="services" className="py-28 relative overflow-hidden">
-      {/* Glow */}
-      <div
-        className="absolute top-0 right-0 pointer-events-none"
-        style={{
-          width: '30rem', height: '30rem',
-          background: 'radial-gradient(circle, rgba(37,173,249,0.1) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-      />
-
-      <div className="max-w-[1360px] w-full mx-auto px-6 md:px-10 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
-          <h2 className="heading_standard max-w-xl">
-            <span className="span_gradient">Laser-focused</span>{' '}
-            on what we're good at.
+    <section id="services" className="bg-[#f8f8f6] py-24 sm:py-32 border-b-[2px] border-[#142127] relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-16">
+          <div className="text-style-tagline">
+            Collective Capabilities
+          </div>
+          <h2 className="heading-style-h1 text-[#142127] mb-6">
+            An ecosystem built for{' '}
+            <span className="heading-style-italic font-editorial text-[1.12em]">
+              software-led growth
+            </span>
           </h2>
-        </motion.div>
+          <p className="text-base sm:text-lg text-[#142127]/80 leading-relaxed font-medium">
+            We don&apos;t build static templates. We engineer high-performance web systems and AI applications designed to scale users, pipeline, and automated intelligence.
+          </p>
+        </div>
 
-        {/* Grid: 2 cols on md, 3 on xl */}
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {SERVICES.map((svc, i) => (
-            <ServiceCard key={svc.num} svc={svc} index={i} />
+        {/* 4-Card Services Grid (Broworks Architecture) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {services.map((service, index) => (
+            <motion.div
+              key={service.number}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-white rounded-3xl p-8 sm:p-10 border-[1.5px] border-[#142127] shadow-[0_12px_32px_rgba(20,33,39,0.06)] hover:shadow-[0_20px_48px_rgba(20,33,39,0.12)] transition-all duration-300 flex flex-col justify-between group"
+            >
+              <div>
+                {/* Header row with Number and Tag */}
+                <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#142127]/10">
+                  <span className="font-mono text-3xl font-extrabold text-[#142127]">
+                    {service.number}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-[#142127]/5 text-[#142127] text-xs font-mono font-bold uppercase tracking-wider">
+                    {service.tag}
+                  </span>
+                </div>
+
+                {/* Service Icon & Title */}
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#fffa56] text-[#142127] border border-[#142127] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#142127] group-hover:text-[#fffa56] transition-all duration-300 shadow-sm">
+                    {getIcon(service.icon)}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-[#142127] tracking-tight">
+                      {service.title}
+                    </h3>
+                    <p className="text-xs font-mono text-[#142127]/60">
+                      {service.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-[#142127]/80 text-sm leading-relaxed mb-8 font-medium">
+                  {service.description}
+                </p>
+
+                {/* Deliverables Checklist */}
+                <div className="space-y-2.5 pt-4 border-t border-[#142127]/10 mb-8">
+                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#142127]/60 mb-2">
+                    Key Deliverables:
+                  </div>
+                  {service.deliverables.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2.5 text-sm font-semibold text-[#142127]">
+                      <div className="w-4 h-4 rounded-full bg-[#142127] text-[#fffa56] flex items-center justify-center flex-shrink-0">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </div>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bottom Card CTA */}
+              <div className="pt-4 flex items-center justify-between border-t border-[#142127]/10">
+                <span className="text-xs font-mono text-[#142127]/60">
+                  Ready to deploy in Q1/Q2
+                </span>
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    if (onOpenContact) {
+                      e.preventDefault()
+                      onOpenContact()
+                    }
+                  }}
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-[#142127] group-hover:text-[#351593] transition-colors"
+                >
+                  <span>Inquire for Project</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* CTA row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-14 flex items-center gap-4"
-        >
-          <a href="#contact" className="button group">
-            <span>Work with us</span>
-            <div className="button_hover" />
-          </a>
-          <a href="#work" className="button is-secondary group inline-flex items-center gap-2">
-            See our work
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
-        </motion.div>
+        {/* Bottom Banner */}
+        <div className="mt-16 p-8 rounded-3xl bg-[#fffa56] border-[1.5px] border-[#142127] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
+          <div>
+            <h4 className="text-xl sm:text-2xl font-bold text-[#142127]">
+              Need a tailored software or AI architecture?
+            </h4>
+            <p className="text-sm text-[#142127]/80 font-medium">
+              We provide free 30-minute system audits and codebase roadmaps.
+            </p>
+          </div>
+          <DirectionalButton
+            variant="dark"
+            href="#contact"
+            onClick={(e) => {
+              if (onOpenContact) {
+                e.preventDefault()
+                onOpenContact()
+              }
+            }}
+            className="px-6 py-3 text-sm flex-shrink-0"
+          >
+            <span>Talk to Engineers</span>
+            <ArrowRight className="w-4 h-4" />
+          </DirectionalButton>
+        </div>
       </div>
     </section>
   )

@@ -1,147 +1,95 @@
 import { useState, useEffect } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronUp } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowUp } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import Stats from './components/Stats'
+import MarqueeLogos from './components/MarqueeLogos'
 import Services from './components/Services'
+import Results from './components/Results'
 import Projects from './components/Projects'
+import ServicesTrail from './components/ServicesTrail'
+import Framework from './components/Framework'
 import Team from './components/Team'
 import Testimonials from './components/Testimonials'
-import Contact from './components/Contact'
+import FAQ from './components/FAQ'
 import Footer from './components/Footer'
-import ProjectSelector from './components/ProjectSelector'
-import { projects, teamMembers } from './data/data'
-import CyberBackground from './components/CyberBackground'
-import ThreeDBackground from './components/ThreeDBackground'
+import ProjectModal from './components/ProjectModal'
+import ContactModal from './components/ContactModal'
 
 function App() {
-  const [showSelector, setShowSelector] = useState(false)
-  const [selectedProjects, setSelectedProjects] = useState(projects)
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const [selectedProject, setSelectedProject] = useState(null)
+  const [contactModalOpen, setContactModalOpen] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
-    // Simulate loading for initial entrance
-    const loadTimer = setTimeout(() => setLoading(false), 1200)
-    
-    // Project selector
-    const selectorTimer = setTimeout(() => {
-      setShowSelector(true)
-    }, 2000)
-
-    // Scroll progress & back-to-top
     const handleScroll = () => {
       const scrollTop = window.scrollY
       const docHeight = document.documentElement.scrollHeight - window.innerHeight
       const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0
       setScrollProgress(Math.min(progress, 100))
-      setShowBackToTop(scrollTop > 600)
+      setShowBackToTop(scrollTop > 500)
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    
-    return () => {
-      clearTimeout(loadTimer)
-      clearTimeout(selectorTimer)
-      window.removeEventListener('scroll', handleScroll)
-    }
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
-  const handleProjectSelect = (selected) => {
-    setSelectedProjects(selected)
-    setShowSelector(false)
-  }
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
-    <div className="min-h-screen relative bg-black">
-      {/* Loading Screen */}
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
-            className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
-          >
-            <div className="flex flex-col items-center gap-8">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="border border-[#CCFF00] p-8 relative"
-              >
-                <div className="text-[#CCFF00] font-bold text-2xl tracking-[6px] font-mono">
-                  TRIGON VERTEX
-                </div>
-                <div className="absolute -top-[1px] left-0 right-0 h-[1px] bg-[#CCFF00]"
-                  style={{ boxShadow: '0 0 8px rgba(204, 255, 0, 0.8)' }} />
-              </motion.div>
-              
-              <div className="flex gap-1">
-                {[0, 1, 2, 3].map((i) => (
-                  <motion.div
-                    key={i}
-                    className="w-3 h-3 bg-[#CCFF00]"
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
-                  />
-                ))}
-              </div>
-              
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="text-[#CCCCCC]/40 text-[10px] tracking-[3px] font-mono uppercase"
-              >
-                Initializing Systems...
-              </motion.p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Scroll Progress Bar */}
+    <div className="min-h-screen bg-[#f8f8f6] text-[#142127] font-sans antialiased selection:bg-[#fffa56] selection:text-[#142127]">
+      {/* ── Scroll Progress Line (Broworks Clean Accent) ── */}
       <div 
-        className="scroll-progress"
+        className="fixed top-0 left-0 h-[3px] bg-[#142127] z-[60] transition-all duration-75 ease-out"
         style={{ width: `${scrollProgress}%` }}
       />
 
-      {/* Background Effects */}
-      <div className="fixed inset-0 bg-dots opacity-70 pointer-events-none" />
-      <CyberBackground />
-      <ThreeDBackground />
-      <div className="fixed top-0 left-0 w-[600px] h-[600px] orb-1 pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] orb-2 pointer-events-none" />
+      {/* ── Global Header & Navigation ── */}
+      <Navbar onOpenContact={() => setContactModalOpen(true)} />
 
-      {/* Glow Spots */}
-      <div className="fixed top-1/4 right-1/4 w-[400px] h-[400px] bg-[#CCFF00]/4 rounded-full blur-[150px] pointer-events-none" />
-      <div className="fixed bottom-1/4 left-1/4 w-[350px] h-[350px] bg-[#CCFF00]/3 rounded-full blur-[120px] pointer-events-none" />
-
-      {/* Noise Texture Overlay */}
-      <div className="grain-overlay" />
-
-      <Navbar />
-
+      {/* ── Main Site Experience ── */}
       <main>
-        <Hero />
-        <Stats />
-        <Services />
-        <Projects projects={selectedProjects} />
-        <Team members={teamMembers} />
-        <Testimonials />
-        <Contact />
+        {/* 1. Hero Section (Yellow, Editorial Typography, Radial Orbit Arc) */}
+        <Hero 
+          onOpenContact={() => setContactModalOpen(true)}
+          onSelectProject={(project) => setSelectedProject(project)}
+        />
+
+        {/* 2. Infinite Tech Stack & Partner Marquee */}
+        <MarqueeLogos />
+
+        {/* 3. Main Services Section (4 Pillars & Deliverables) */}
+        <Services onOpenContact={() => setContactModalOpen(true)} />
+
+        {/* 4. Results & ROI Section (Lavender #dcd3f7 + Comparison Matrix) */}
+        <Results />
+
+        {/* 5. Production Case Studies (Real Projects, Hover Stats, Filters) */}
+        <Projects onSelectProject={(project) => setSelectedProject(project)} />
+
+        {/* 6. Specialized Capabilities Trail (Interactive Cursor Preview) */}
+        <ServicesTrail />
+
+        {/* 7. Execution Framework (4-Step Architectural Methodology) */}
+        <Framework />
+
+        {/* 8. Core Collective / Team Section (Soft Blue #d2e7f5 + The 3 Engineers) */}
+        <Team />
+
+        {/* 9. Verified Reviews & Client Testimonials */}
+        <Testimonials onOpenContact={() => setContactModalOpen(true)} />
+
+        {/* 10. Common Inquiries & FAQ Accordion (Obsidian Teal #142127) */}
+        <FAQ />
       </main>
 
-      <Footer />
+      {/* ── Giant Footer (Directory, Ask AI, Local Clock) ── */}
+      <Footer onOpenContact={() => setContactModalOpen(true)} />
 
-      {/* Back to Top Button */}
+      {/* ── Floating Back to Top Button ── */}
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
@@ -149,22 +97,25 @@ function App() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 z-40 w-12 h-12 bg-black border border-[#CCFF00] text-[#CCFF00] flex items-center justify-center hover:bg-[#CCFF00] hover:text-black transition-all duration-300 group"
+            className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-[#142127] text-white border-[1.5px] border-[#142127] shadow-xl flex items-center justify-center hover:bg-[#fffa56] hover:text-[#142127] transition-all duration-300 group"
+            aria-label="Back to Top"
           >
-            <ChevronUp className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showSelector && (
-          <ProjectSelector
-            allProjects={projects}
-            onSelect={handleProjectSelect}
-            onClose={() => setShowSelector(false)}
-          />
-        )}
-      </AnimatePresence>
+      {/* ── Interactive Modals ── */}
+      <ProjectModal 
+        project={selectedProject} 
+        onClose={() => setSelectedProject(null)}
+        onOpenContact={() => setContactModalOpen(true)}
+      />
+
+      <ContactModal 
+        isOpen={contactModalOpen} 
+        onClose={() => setContactModalOpen(false)} 
+      />
     </div>
   )
 }

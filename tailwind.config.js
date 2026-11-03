@@ -7,37 +7,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        gold: {
-          DEFAULT: '#CCFF00',       /* Neon Lime */
-          dark: '#CCFF00',          /* Neon Lime */
-          light: 'rgba(204, 255, 0, 0.1)',
-        },
-        primary: '#000000',         /* Pure Black */
-        cream: '#000000',           /* Pure Black */
+        bwYellow: '#fffa56',
+        bwDark: '#142127',
+        bwDarker: '#0e181c',
+        bwDarkSlate: '#263f4a',
+        bwMuted: '#5a6e78',
+        bwLavender: '#dcd3f7',
+        bwIceBlue: '#d2e7f5',
+        bwNeutralLight: '#f8f8f6',
+        bwBorder: '#142127',
+        bwBorderLight: 'rgba(20, 33, 39, 0.12)',
       },
       fontFamily: {
-        clash: ['Space Mono', 'monospace'],
-        satoshi: ['Space Mono', 'monospace'],
-        mono: ['Space Mono', 'monospace'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        editorial: ['"Instrument Serif"', 'Georgia', 'serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       animation: {
-        'float': 'float 4s ease-in-out infinite',
-        'float-delayed': 'float-delayed 4s ease-in-out infinite 1s',
-        'pulse-gold': 'pulse-gold 2s ease-in-out infinite',
+        'marquee': 'marquee-scroll 45s linear infinite',
+        'marquee-reverse': 'marquee-scroll-reverse 45s linear infinite',
+        'orbit': 'rotate360 90s linear infinite',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-15px)' },
+        'marquee-scroll': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
-        floatDelayed: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-15px)' },
+        'marquee-scroll-reverse': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' },
         },
-        pulseGold: {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(204, 255, 0, 0.3)' },
-          '50%': { boxShadow: '0 0 40px rgba(204, 255, 0, 0.5)' },
-        }
+        rotate360: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(-360deg)' },
+        },
       },
     },
   },
